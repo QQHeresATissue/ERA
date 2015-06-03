@@ -455,7 +455,7 @@ class StartLOOT(Thread):
 				"True Sansha",
 				"Shadow Serpentis",
 				"Sentient",
-				"Domination"
+				"Domination",
 				"Estamel Tharchon",
 				"Vepas Minimala",
 				"Thon Eney",
