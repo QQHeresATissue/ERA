@@ -38,7 +38,7 @@ class EVEDir(object):
                 # If we can't use pywin32, just fall back to a guess
                 return os.path.join(os.path.expanduser('~'), 'Documents', 'EVE')
         elif system == "Darwin":
-            return os.path.expanduser('~/Library/Application Support/EVE')
+            return os.path.expanduser('~/Library/Application Support/EVE Online/p_drive/User/My Documents/EVE')
 
     @ClassProperty
     @classmethod
