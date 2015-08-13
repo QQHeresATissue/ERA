@@ -61,7 +61,7 @@ import wx
 import wx.media
 
 # set a version
-ver = "1.0.3"
+ver = "1.0.4"
 
 ID_HOSTILE_START = wx.NewId()
 ID_LOOT_START = wx.NewId()
