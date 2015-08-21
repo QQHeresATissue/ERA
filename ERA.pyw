@@ -341,9 +341,8 @@ class StartHOSTILE(Thread):
 							winsound.PlaySound("%s" % hostile_sound,SND_FILENAME)
 
 						elif which_os == "Darwin":
-							print('\a')
-							print('\a')
-							print('\a')
+							os.system("afplay %r" % hostile_sound)
+
 
 	def find_system_in_string(self, string):
 		for system in era.current_region:
@@ -426,9 +425,8 @@ class StartLOOT(Thread):
 						winsound.PlaySound("%s" % done_sound,SND_FILENAME)
 
 					elif which_os == "Darwin":
-						print('\a')
-						print('\a')
-						print('\a')
+						os.system("afplay %r" % done_sound)
+
 
 					done_count = 0
 
@@ -502,9 +500,8 @@ class StartLOOT(Thread):
 						winsound.PlaySound("%s" % tags_and_ammo,SND_FILENAME)
 
 					elif which_os == "Darwin":
-						print('\a')
-						print('\a')
-						print('\a')
+						os.system("afplay %r" % tags_and_ammo)
+
 
 					else:
 						print "What fucking system are you running?"
