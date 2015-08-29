@@ -61,7 +61,7 @@ import wx
 import wx.media
 
 # set a version
-ver = "1.0.5"
+ver = "1.0.6"
 
 # supress errors (comment out for verbosity)
 sys.tracebacklimit = 0
