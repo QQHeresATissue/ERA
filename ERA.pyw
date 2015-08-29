@@ -61,7 +61,7 @@ import wx
 import wx.media
 
 # set a version
-ver = "1.0.4"
+ver = "1.0.5"
 
 # supress errors (comment out for verbosity)
 sys.tracebacklimit = 0
@@ -349,8 +349,9 @@ class StartHOSTILE(Thread):
 							winsound.PlaySound("%s" % hostile_sound,SND_FILENAME)
 
 						elif which_os == "Darwin":
-							os.system("afplay %r" % hostile_sound)
-
+							print('\a')
+							print('\a')
+							print('\a')
 
 	def find_system_in_string(self, string):
 		for system in era.current_region:
@@ -433,8 +434,9 @@ class StartLOOT(Thread):
 						winsound.PlaySound("%s" % done_sound,SND_FILENAME)
 
 					elif which_os == "Darwin":
-						os.system("afplay %r" % done_sound)
-
+						print('\a')
+						print('\a')
+						print('\a')
 
 					done_count = 0
 
@@ -513,8 +515,9 @@ class StartLOOT(Thread):
 						winsound.PlaySound("%s" % tags_and_ammo,SND_FILENAME)
 
 					elif which_os == "Darwin":
-						os.system("afplay %r" % tags_and_ammo)
-
+						print('\a')
+						print('\a')
+						print('\a')
 
 					else:
 						print "What fucking system are you running?"
