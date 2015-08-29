@@ -63,6 +63,9 @@ import wx.media
 # set a version
 ver = "1.0.4"
 
+# supress errors (comment out for verbosity)
+sys.tracebacklimit = 0
+
 ID_HOSTILE_START = wx.NewId()
 ID_LOOT_START = wx.NewId()
 
@@ -252,7 +255,7 @@ class StartHOSTILE(Thread):
 		self.start()
 
 	def abort(self):
-		print "Called to stop"
+		print "Stopping the Hostile thread\n"
 		self._want_abort = 1
 
 	# setup our log file watcher, only open it once and update when a new line is written
@@ -288,8 +291,13 @@ class StartHOSTILE(Thread):
 		# testing line so we shit up Corp chat not intel chans
 		# hostile_tmp = sorted([ f for f in os.listdir(hostile_logdir) if f.startswith('Corp')])
 
-		# grab the most recent file for each log
-		logfile = os.path.join( hostile_logdir, hostile_tmp[-1] )
+		# grab the most recent file for each log, handle the error if it doesn't exist
+		try:
+			logfile = os.path.join( hostile_logdir, hostile_tmp[-1] )
+		except:
+			print "There don't appear to be any log files here at: %s" % hostile_logdir
+			self.abort()
+			exit()
 
 		# ignore status requests and clr reports
 		status_words = [ "status",
@@ -397,7 +405,7 @@ class StartLOOT(Thread):
 		self.start()
 
 	def abort(self):
-		print "Called to stop"
+		print "Stopping the Loot watch thread\n"
 		self._want_abort = 1
 
 	# setup our log file watcher, only open it once and update when a new line is written
@@ -437,15 +445,20 @@ class StartLOOT(Thread):
 	def run(self):
 		count = 0
 
+		print "\nStarting the Loot Watcher"
+
 		logdir = EVEDir.game_logs
 
 		# sort by date
 		tmp = sorted([ f for f in os.listdir(logdir) if f.startswith('201')])
 
 		# grab the most recent file
-		fn = os.path.join( logdir, tmp[-1] )
-
-		print "\nStarting the Loot Watcher"
+		try:
+			fn = os.path.join( logdir, tmp[-1] )
+		except:
+			print "There don't appear to be any log files here at: %s" % logdir
+			self.abort()
+			exit()
 
 		print "parsing from %s\n" % tmp[-1]
 
