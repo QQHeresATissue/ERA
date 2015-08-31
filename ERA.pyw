@@ -110,6 +110,8 @@ class era(wx.Frame):
         
 		self.debug = settingsMenu.Append(wx.ID_ANY, 'Enable Debugging', 
 			'Enable Debugging', kind=wx.ITEM_CHECK)
+		self.hostile_timer = settingsMenu.Append(wx.ID_ANY, 'Notification Timer',
+			'Notification Timer', kind=wx.StaticText)
             
 		settingsMenu.Check(self.debug.GetId(), False)
 

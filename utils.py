@@ -43,10 +43,7 @@ class EVEDir(object):
     @ClassProperty
     @classmethod
     def game_logs(cls):
-        if platform.system() == "Darwin":
-            return os.path.join(cls.personal, "logs", "Chatlogs")
-        else:
-            return os.path.join(cls.personal, "logs", "Gamelogs")
+        return os.path.join(cls.personal, "logs", "Gamelogs")
 
     @ClassProperty
     @classmethod
