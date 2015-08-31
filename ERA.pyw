@@ -119,9 +119,6 @@ class era(wx.Frame):
 		menubar.Append(settingsMenu, '&Settings')
 		self.SetMenuBar(menubar)
 
-		self.toolbar = self.CreateToolBar()
-		#self.toolbar.Realize()
-
 		# Event used to close the script
 		self.Bind(wx.EVT_CLOSE, self.Close)
 
@@ -428,7 +425,7 @@ class StartLOOT(Thread):
 						yield (word, new)
 			else:
 				done_count = done_count + 1
-				print "%s\n" % done_count
+
 				if done_count > self.interval:
 					print "LOOT Notification"
 					print "%r - Sites done (or something is wrong)\n" % (time.strftime('%H:%M:%S'))
