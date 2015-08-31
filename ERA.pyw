@@ -61,7 +61,7 @@ import wx
 import wx.media
 
 # set a version
-ver = "1.0.6"
+ver = "1.0.7"
 
 # supress errors (comment out for verbosity)
 sys.tracebacklimit = 0
@@ -99,7 +99,6 @@ class era(wx.Frame):
 	def __init__(self,parent,id):
 
 		# Create the main window with the title ERA <version number>
-		#wx.Frame.__init__(self,parent,id,'ERA %s' % ver, size=(800,340), style = wx.DEFAULT_FRAME_STYLE & ~ (wx.RESIZE_BORDER | wx.MAXIMIZE_BOX))
 		wx.Frame.__init__(self,parent,id,'ERA %s' % ver, size=(800,365), style = wx.DEFAULT_FRAME_STYLE)
 
 		menubar = wx.MenuBar()
@@ -110,8 +109,6 @@ class era(wx.Frame):
         
 		self.debug = settingsMenu.Append(wx.ID_ANY, 'Enable Debugging', 
 			'Enable Debugging', kind=wx.ITEM_CHECK)
-		self.hostile_timer = settingsMenu.Append(wx.ID_ANY, 'Notification Timer',
-			'Notification Timer', kind=wx.StaticText)
             
 		settingsMenu.Check(self.debug.GetId(), False)
 
@@ -123,9 +120,9 @@ class era(wx.Frame):
 		self.SetMenuBar(menubar)
 
 		self.toolbar = self.CreateToolBar()
-		self.toolbar.Realize()
+		#self.toolbar.Realize()
 
-		#
+		# Event used to close the script
 		self.Bind(wx.EVT_CLOSE, self.Close)
 
 		# Create a panel in the windows
@@ -140,16 +137,25 @@ class era(wx.Frame):
 		sys.stderr = redir
 
 		# Create a start and stop button
-		self.hostile_watch = wx.ToggleButton(self.panel, ID_HOSTILE_START, label="Hostile Watch", pos=(530,10), size=(95,25))
-		self.loot_watch = wx.ToggleButton(self.panel, ID_LOOT_START, label="Loot Watch", pos=(10, 10), size=(90,25))
+		self.hostile_watch = wx.ToggleButton(self.panel, ID_HOSTILE_START, label="Hostile Watch", pos=(595,10), size=(95,25))
+		self.loot_watch = wx.ToggleButton(self.panel, ID_LOOT_START, label="Loot Watch", pos=(125, 10), size=(90,25))
+
+		# Create dropdown for update interval on the loot watcher
+		check_interval = [ '15', '30', '45', '60', '75', '90' ]
+		# Create text "Interval" before the dropdown 
+		wx.StaticText(self.panel, -1, 'Interval', (10,15))
+		# Create the dropdown and populate with the list
+		era.check_interval = wx.ComboBox(self.panel, -1, '', pos=(65,10), size=(60,25), choices = check_interval, style=wx.CB_DROPDOWN)
+		# Set 60 seconds as the default (count starts from 0)
+		era.check_interval.SetSelection(3)
 
 		# Define regions we have systems for in a list
 		region_list = [ 'dek', 'brn', 'ftn', 'fade', 'tnl', 'tri', 'vnl', 'vale', 'cr' ]
 		# Create text "Region" before the dropdown box
-		wx.StaticText(self.panel, -1, 'Region', (105,15))
-
-		# Create the dropdown box and use DEK as a default selection
-		era.region_select = wx.ComboBox(self.panel, -1, pos=(150,10), size=(75,25), choices = region_list, style=wx.CB_DROPDOWN)
+		wx.StaticText(self.panel, -1, 'Region', (225,15))
+		# Create the dropdown box
+		era.region_select = wx.ComboBox(self.panel, -1, pos=(280,10), size=(75,25), choices = region_list, style=wx.CB_DROPDOWN)
+		#  Use DEK as a default selection
 		era.region_select.SetSelection(0)
 
 		# Load triggers from json courtesty of Orestus, Narex Vivari for adding auto complete. 
@@ -157,14 +163,14 @@ class era(wx.Frame):
 		era.region_select.Bind(wx.EVT_COMBOBOX, self.region_selection_changed, era.region_select)
 
 		#Create the system input box
-		wx.StaticText(self.panel, -1, 'System', (230, 15))
-		era.system_select = wx.TextCtrl(self.panel, -1, '', pos=(280,10), size=(120,-1))
+		wx.StaticText(self.panel, -1, 'System', (360, 15))
+		era.system_select = wx.TextCtrl(self.panel, -1, '', pos=(410,10), size=(75,-1))
 		era.system_select.Bind(wx.EVT_TEXT, self.system_text_changed, era.system_select)
 
 		# Create the range input box
 		range_list = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ]
-		wx.StaticText(self.panel, -1, 'Range', (410, 15))
-		era.range_select = wx.ComboBox(self.panel, -1, '', pos=(450,10), size=(80,25), choices = range_list, style=wx.CB_DROPDOWN)
+		wx.StaticText(self.panel, -1, 'Range', (490, 15))
+		era.range_select = wx.ComboBox(self.panel, -1, '', pos=(535,10), size=(60,25), choices = range_list, style=wx.CB_DROPDOWN)
 		era.range_select.SetSelection(5)
 
 		# Bind button clicks to events (start|stop)
@@ -234,8 +240,6 @@ class era(wx.Frame):
 	def Close(self, event):
 		self.Destroy()
 
-	#def get_clients(self, event):
-
 	# This is rather bad and probably doesnt work... fix me
 	def toggle_debug(self, event):
 		if self.debug.IsChecked():
@@ -243,7 +247,6 @@ class era(wx.Frame):
 			sys.tracebacklimit = 1
 		else:
 			sys.tracebacklimit = 0
-
 
 # Define watcher thread
 class StartHOSTILE(Thread):
@@ -303,14 +306,14 @@ class StartHOSTILE(Thread):
 
 		# ignore status requests and clr reports
 		status_words = [ "status",
-						"Status",
-						"clear",
-						"Clear",
-						"stat",
-						"Stat",
-						"clr",
-						"Clr",
-						"EVE System" ]
+					"Status",
+					"clear",
+					"Clear",
+					"stat",
+					"Stat",
+					"clr",
+					"Clr",
+					"EVE System" ]
 
 		# Print some initial info lines
 		print "parsing from - Intel:  %s\n" % (hostile_tmp[-1])
@@ -412,6 +415,8 @@ class StartLOOT(Thread):
 	def loot_watch(self, fn, words):
 		done_count = 0
 
+		self.interval = int(era.check_interval.GetValue()) * 2
+
 		fp = open(fn, 'r')
 		while self._want_abort == 0:
 			new = fp.readline()
@@ -423,7 +428,8 @@ class StartLOOT(Thread):
 						yield (word, new)
 			else:
 				done_count = done_count + 1
-				if done_count > 129:
+				print "%s\n" % done_count
+				if done_count > self.interval:
 					print "LOOT Notification"
 					print "%r - Sites done (or something is wrong)\n" % (time.strftime('%H:%M:%S'))
 
@@ -462,35 +468,35 @@ class StartLOOT(Thread):
 
 		# triggers to look for in the log file
 		words = [ "Dread Guristas",
-				"Dark Blood",
-				"True Sansha",
-				"Shadow Serpentis",
-				"Sentient",
-				"Domination",
-				"Estamel Tharchon",
-				"Vepas Minimala",
-				"Thon Eney",
-				"Kaikka Peunato",
-				"Gotan Kreiss",
-				"Hakim Stormare",
-				"Mizuro Cybon",
-				"Tobias Kruzhor",
-				"Ahremen Arkah",
-				"Draclira Merlonne",
-				"Raysere Giant",
-				"Tairei Namazoth",
-				"Brokara Ryver",
-				"Chelm Soran",
-				"Selynne Mardakar",
-				"Vizan Ankonin",
-				"Brynn Jerdola",
-				"Cormack Vaaja",
-				"Setele Schellan",
-				"Tuvan Orth", ]
+			"Dark Blood",
+			"True Sansha",
+			"Shadow Serpentis",
+			"Sentient",
+			"Domination",
+			"Estamel Tharchon",
+			"Vepas Minimala",
+			"Thon Eney",
+			"Kaikka Peunato",
+			"Gotan Kreiss",
+			"Hakim Stormare",
+			"Mizuro Cybon",
+			"Tobias Kruzhor",
+			"Ahremen Arkah",
+			"Draclira Merlonne",
+			"Raysere Giant",
+			"Tairei Namazoth",
+			"Brokara Ryver",
+			"Chelm Soran",
+			"Selynne Mardakar",
+			"Vizan Ankonin",
+			"Brynn Jerdola",
+			"Cormack Vaaja",
+			"Setele Schellan",
+			"Tuvan Orth", ]
 
 		# Don't trigger if we are accepting or getting a contract
 		false_pos = [ "following items",
-					"question" ]
+				"question" ]
 
 		for hit_word, hit_sentence in self.loot_watch(fn, words):
 
