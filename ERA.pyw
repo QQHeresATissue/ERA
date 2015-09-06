@@ -61,7 +61,7 @@ import wx
 import wx.media
 
 # set a version
-ver = "1.0.7"
+ver = "1.0.7.2"
 
 # supress errors (comment out for verbosity)
 sys.tracebacklimit = 0
@@ -508,19 +508,23 @@ class StartLOOT(Thread):
 					# debug statement
 					# print "%r" % (hit_sentence)
 
-					# play a tone to get attention
-					if which_os == "Linux":
-						os.system("aplay -q %r" % tags_and_ammo)
+					# get current date/time in UTC
+					utc = time.strftime('[ %Y.%m.%d %H:%M', gmtime())[:17]
+					
+					if utc in hit_sentence:
+						# play a tone to get attention
+						if which_os == "Linux":
+							os.system("aplay -q %r" % tags_and_ammo)
 
-					elif which_os == "Windows":
-						winsound.PlaySound("%s" % tags_and_ammo,SND_FILENAME)
+						elif which_os == "Windows":
+							winsound.PlaySound("%s" % tags_and_ammo,SND_FILENAME)
 
-					elif which_os == "Darwin":
-						os.system("afplay %r" % tags_and_ammo)
+						elif which_os == "Darwin":
+							os.system("afplay %r" % tags_and_ammo)
 
-					else:
-						print "What fucking system are you running?"
-						break
+						else:
+							print "What fucking system are you running?"
+							break
 
 				elif count == 30:
 					count = 0
