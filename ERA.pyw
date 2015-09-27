@@ -202,7 +202,7 @@ class era(wx.Frame):
 
 	def match_partial_system(self, text):
 		for system in era.current_region:
-			if system['name'].startswith(text):
+			if bool(re.match(text, system['name'], re.I)):
 				return system['name']
 		return None
 
